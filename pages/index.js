@@ -15,19 +15,30 @@ const addTodoForm = document.querySelector("#add-todo-popup .popup__form");
 const addTodoFormValidator = new FormValidator(validationConfig, addTodoForm);
 addTodoFormValidator.enableValidation();
 
-// Function to create a Todo DOM element
+const todoCounter = new TodoCounter(initialTodos, ".counter__text");
+
+// Handlers
+function handleCheck(completed) {
+  todoCounter.updateCompleted(completed);
+}
+
+function handleDelete(completed) {
+  if (completed) {
+    todoCounter.updateCompleted(false);
+  }
+}
+
 const generateTodo = (data) => {
-  const todo = new Todo(data, "#todo-template");
-  return todo.getView();
+  const todo = new Todo(data, "#todo-template", handleCheck, handleDelete, todoCounter);
+  const todoElement = todo.getView();
+  return todoElement;
 };
 
-// Renderer function for Section
 const renderTodo = (item) => {
   const todoElement = generateTodo(item);
   section.addItem(todoElement);
 };
 
-// Section instance: handles rendering and adding to-do items
 const section = new Section({
   items: initialTodos,
   renderer: renderTodo,
@@ -35,10 +46,6 @@ const section = new Section({
 });
 section.renderItems();
 
-// TodoCounter instance
-const todoCounter = new TodoCounter(initialTodos, ".counter__text");
-
-// PopupWithForm instance
 const addTodoPopupWithForm = new PopupWithForm("#add-todo-popup", (formData) => {
   const date = new Date(formData.date);
   date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
@@ -58,7 +65,6 @@ const addTodoPopupWithForm = new PopupWithForm("#add-todo-popup", (formData) => 
 });
 addTodoPopupWithForm.setEventListeners();
 
-// Open popup on button click
 addTodoButton.addEventListener("click", () => {
   addTodoPopupWithForm.open();
 });

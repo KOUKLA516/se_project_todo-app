@@ -5,14 +5,14 @@ class Section {
       this._container = document.querySelector(containerSelector);
     }
   
-    // Renders all items on load
+    // renders all items on load
     renderItems() {
       this._items.forEach(item => {
         this._renderer(item);
       });
     }
   
-    // Adds a single DOM element to the container
+    // adds a single DOM element to the container
     addItem(element) {
       this._container.append(element);
     }

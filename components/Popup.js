@@ -6,7 +6,7 @@ class Popup {
   
     open() {
       this._popup.classList.add("popup_visible");
-      document.addEventListener("keydown", this._handleEscapeClose);
+      document.addEventListener("keyup", this._handleEscapeClose);
     }
   
     close() {
@@ -21,12 +21,12 @@ class Popup {
     }
   
     setEventListeners() {
-      // Close icon
+      // close icon
       this._popup.querySelector(".popup__close").addEventListener("click", () => {
         this.close();
       });
   
-      // Clicking on overlay (outside of popup)
+      // clicking on overlay
       this._popup.addEventListener("mousedown", (evt) => {
         if (evt.target === this._popup) {
           this.close();
