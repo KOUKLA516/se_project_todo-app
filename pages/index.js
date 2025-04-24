@@ -7,64 +7,65 @@ import Section from "../components/Section.js";
 import PopupWithForm from "../components/PopupWithForm.js";
 import TodoCounter from "../components/TodoCounter.js";
 
-// DOM elements
-const addTodoButton = document.querySelector(".button_action_add");
-const addTodoForm = document.querySelector("#add-todo-popup .popup__form");
+document.addEventListener("DOMContentLoaded", () => {
+  // DOM elements
+  const addTodoButton = document.querySelector(".button_action_add");
+  const addTodoForm = document.querySelector("#add-todo-popup .popup__form");
 
-// Validator
-const addTodoFormValidator = new FormValidator(validationConfig, addTodoForm);
-addTodoFormValidator.enableValidation();
+  // validator
+  const addTodoFormValidator = new FormValidator(validationConfig, addTodoForm);
+  addTodoFormValidator.enableValidation();
 
-const todoCounter = new TodoCounter(initialTodos, ".counter__text");
+  // instantiate TodoCounter
+  const todoCounter = new TodoCounter(initialTodos, ".counter__text");
 
-// Handlers
-function handleCheck(completed) {
-  todoCounter.updateCompleted(completed);
-}
-
-function handleDelete(completed) {
-  if (completed) {
-    todoCounter.updateCompleted(false);
-  }
-}
-
-const generateTodo = (data) => {
-  const todo = new Todo(data, "#todo-template", handleCheck, handleDelete, todoCounter);
-  const todoElement = todo.getView();
-  return todoElement;
-};
-
-const renderTodo = (item) => {
-  const todoElement = generateTodo(item);
-  section.addItem(todoElement);
-};
-
-const section = new Section({
-  items: initialTodos,
-  renderer: renderTodo,
-  containerSelector: ".todos__list",
-});
-section.renderItems();
-
-const addTodoPopupWithForm = new PopupWithForm("#add-todo-popup", (formData) => {
-  const date = new Date(formData.date);
-  date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
-
-  const newTodo = {
-    name: formData.name,
-    date,
-    id: uuidv4(),
-    completed: false,
+  // function to generate a todo and ensure todoCounter is passed
+  const generateTodo = (data) => {
+    const todo = new Todo(data, "#todo-template", todoCounter);
+    return todo.getView();
   };
 
-  const todoElement = generateTodo(newTodo);
-  section.addItem(todoElement);
-  todoCounter.updateTotal(true);
+  // function to render todos
+  const renderTodo = (item) => {
+    const todoElement = generateTodo(item);
+    section.addItem(todoElement);
+  };
 
-  addTodoFormValidator.resetValidation();
-});
-addTodoPopupWithForm.setEventListeners();
+  // instantiate Section
+  const section = new Section({
+    items: initialTodos,
+    renderer: renderTodo,
+    containerSelector: ".todos__list",
+  });
 
-addTodoButton.addEventListener("click", () => {
-  addTodoPopupWithForm.open();
+  // render initial items
+  section.renderItems();
+
+  // instantiate PopupWithForm
+  const addTodoPopupWithForm = new PopupWithForm("#add-todo-popup", (formData) => {
+    console.log("formData:", formData); // debug: check values
+
+    const date = new Date(formData.date);
+    date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
+
+    const newTodo = {
+      name: formData.name,
+      date,
+      id: uuidv4(),
+      completed: false,
+    };
+
+    const todoElement = generateTodo(newTodo);
+    section.addItem(todoElement);
+    todoCounter.updateTotal(true);
+    addTodoFormValidator.resetValidation();
+  });
+
+  // set event listeners for the popup
+  addTodoPopupWithForm.setEventListeners();
+
+  // open popup event listener
+  addTodoButton.addEventListener("click", () => {
+    addTodoPopupWithForm.open();
+  });
 });
