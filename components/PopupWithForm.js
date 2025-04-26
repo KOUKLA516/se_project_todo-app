@@ -1,46 +1,49 @@
 import Popup from "./Popup.js";
 
 class PopupWithForm extends Popup {
-  constructor(popupSelector, handleFormSubmit) {
+  constructor(popupSelector, handleFormSubmit, validatorInstance) {
     super(popupSelector);
     this._handleFormSubmit = handleFormSubmit;
+    this._validator = validatorInstance; 
     this._form = this._popup.querySelector(".popup__form");
-
-    console.log("popup selector:", popupSelector);
-    console.log("this._popup:", this._popup);
-    console.log("this._form:", this._form);
-
-    this._inputList = this._form.querySelectorAll("input");
+    this._inputList = Array.from(this._form.querySelectorAll("input"));
   }
 
   _getInputValues() {
     const formValues = {};
     this._inputList.forEach((input) => {
-      formValues[input.name] = input.value;
+      formValues[input.name] = input.value.trim(); 
+      console.log(`Captured input - ${input.name}: ${input.value}`); // debugging
     });
     return formValues;
   }
-  
 
   setEventListeners() {
     super.setEventListeners();
-
-    console.log("Form element:", this._form);
-    console.log("Inputs inside form:", this._form.querySelectorAll("input"));
     
-
     this._form.addEventListener("submit", (evt) => {
       evt.preventDefault();
-      const inputValues = this._getInputValues();
-      console.log("Input values before submission:", inputValues);
-      this._handleFormSubmit(inputValues);
-      this.close();
+
+      if (this._validator.isValid()) {
+        const formData = this._getInputValues();
+
+        if (formData.name && formData.date) { 
+          console.log("Submitting form with data: ", formData); // debugging
+          this._handleFormSubmit(formData);
+          this._form.reset();
+          this._validator.resetValidation(); 
+          this.close();
+        } else {
+          console.warn("Form submission blocked - Missing required input values.");
+        }
+      }
     });
   }
 
   close() {
     super.close();
     this._form.reset();
+    this._validator.resetValidation(); 
   }
 }
 

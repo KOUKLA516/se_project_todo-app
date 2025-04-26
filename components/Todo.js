@@ -49,7 +49,6 @@ class Todo {
     this._todoDeleteBtn = this._todoElement.querySelector(".todo__delete-btn");
 
     todoNameEl.textContent = this.data.name;
-
     // handle due date
     if (this.data.date) {
       const dueDate = new Date(this.data.date);

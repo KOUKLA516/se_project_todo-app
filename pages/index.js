@@ -12,59 +12,65 @@ document.addEventListener("DOMContentLoaded", () => {
   const addTodoButton = document.querySelector(".button_action_add");
   const addTodoForm = document.querySelector("#add-todo-popup .popup__form");
 
-  // validator
+  // validator instance for the add-todo form
   const addTodoFormValidator = new FormValidator(validationConfig, addTodoForm);
   addTodoFormValidator.enableValidation();
 
   // instantiate TodoCounter
   const todoCounter = new TodoCounter(initialTodos, ".counter__text");
 
-  // function to generate a todo and ensure todoCounter is passed
   const generateTodo = (data) => {
     const todo = new Todo(data, "#todo-template", todoCounter);
     return todo.getView();
   };
 
-  // function to render todos
   const renderTodo = (item) => {
     const todoElement = generateTodo(item);
     section.addItem(todoElement);
   };
 
-  // instantiate Section
+  // instantiate section
   const section = new Section({
     items: initialTodos,
     renderer: renderTodo,
     containerSelector: ".todos__list",
   });
 
-  // render initial items
   section.renderItems();
 
-  // instantiate PopupWithForm
-  const addTodoPopupWithForm = new PopupWithForm("#add-todo-popup", (formData) => {
-    console.log("formData:", formData); // debug: check values
+  // instantiate PopupWithForm for adding new to-dos
+  const addTodoPopupWithForm = new PopupWithForm(
+    "#add-todo-popup",
+    (formData) => {
+      console.log("Processed Form Data: ", formData); // debugging
 
-    const date = new Date(formData.date);
-    date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
+      // date and adjust for timezone
+      const date = new Date(formData.date);
+      date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
 
-    const newTodo = {
-      name: formData.name,
-      date,
-      id: uuidv4(),
-      completed: false,
-    };
+      // create the new to-do object
+      const newTodo = {
+        name: formData.name,
+        date,
+        id: uuidv4(),
+        completed: false,
+      };
 
-    const todoElement = generateTodo(newTodo);
-    section.addItem(todoElement);
-    todoCounter.updateTotal(true);
-    addTodoFormValidator.resetValidation();
-  });
+      // generate and add new to-do element
+      const todoElement = generateTodo(newTodo);
+      section.addItem(todoElement);
+
+      // update TodoCounter and reset the form validator
+      todoCounter.updateTotal(true);
+      addTodoFormValidator.resetValidation();
+    },
+    addTodoFormValidator // pass the form validator instance here
+  );
 
   // set event listeners for the popup
   addTodoPopupWithForm.setEventListeners();
 
-  // open popup event listener
+  // add event listener to open the add-to-do popup
   addTodoButton.addEventListener("click", () => {
     addTodoPopupWithForm.open();
   });
