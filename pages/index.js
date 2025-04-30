@@ -10,7 +10,7 @@ import TodoCounter from "../components/TodoCounter.js";
 document.addEventListener("DOMContentLoaded", () => {
   // DOM elements
   const addTodoButton = document.querySelector(".button_action_add");
-  const addTodoForm = document.querySelector("#add-todo-popup .popup__form");
+  const addTodoForm = document.forms["add-todo-form"];
 
   // validator instance for the add-todo form
   const addTodoFormValidator = new FormValidator(validationConfig, addTodoForm);
@@ -56,9 +56,8 @@ document.addEventListener("DOMContentLoaded", () => {
         completed: false,
       };
 
-      // generate and add new to-do element
-      const todoElement = generateTodo(newTodo);
-      section.addItem(todoElement);
+      renderTodo(newTodo); // reuse renderTodo
+      addTodoPopupWithForm.close(); // close the popup after adding
 
       // update TodoCounter and reset the form validator
       todoCounter.updateTotal(true);

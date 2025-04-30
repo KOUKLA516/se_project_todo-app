@@ -1,8 +1,8 @@
 class Todo {
   constructor(data, selector, counter) {
-    this.data = data;
-    this.counter = counter; 
-    this.templateElement = document.querySelector(selector);
+    this._data = data;          // use _ for private properties
+    this._counter = counter;     // use _ for private properties
+    this._templateElement = document.querySelector(selector); // use _ for private properties
   }
 
   _setEventListeners() {
@@ -11,21 +11,21 @@ class Todo {
       this._todoElement.remove();
 
       // check if counter exists before calling methods
-      if (this.counter) {
-        this.counter.updateTotal(false);
-        if (this.data.completed) {
-          this.counter.updateCompleted(false);
+      if (this._counter) {
+        this._counter.updateTotal(false);
+        if (this._data.completed) {
+          this._counter.updateCompleted(false);
         }
       }
     });
 
     // checkbox handler
     this._todoCheckboxEl.addEventListener("change", () => {
-      this.data.completed = !this.data.completed;
+      this._data.completed = !this._data.completed;
 
       // ensure method exists before calling
-      if (this.counter && typeof this.counter.updateCompleted === "function") {
-        this.counter.updateCompleted(this.data.completed);
+      if (this._counter && typeof this._counter.updateCompleted === "function") {
+        this._counter.updateCompleted(this._data.completed);
       }
     });
   }
@@ -34,13 +34,13 @@ class Todo {
     this._todoCheckboxEl = this._todoElement.querySelector(".todo__completed");
     this._todoLabel = this._todoElement.querySelector(".todo__label");
 
-    this._todoCheckboxEl.checked = this.data.completed;
-    this._todoCheckboxEl.id = `todo-${this.data.id}`;
-    this._todoLabel.setAttribute("for", `todo-${this.data.id}`);
+    this._todoCheckboxEl.checked = this._data.completed;
+    this._todoCheckboxEl.id = `todo-${this._data.id}`;
+    this._todoLabel.setAttribute("for", `todo-${this._data.id}`);
   }
 
   getView() {
-    this._todoElement = this.templateElement.content
+    this._todoElement = this._templateElement.content
       .querySelector(".todo")
       .cloneNode(true);
 
@@ -48,10 +48,10 @@ class Todo {
     const todoDate = this._todoElement.querySelector(".todo__date");
     this._todoDeleteBtn = this._todoElement.querySelector(".todo__delete-btn");
 
-    todoNameEl.textContent = this.data.name;
+    todoNameEl.textContent = this._data.name;
     // handle due date
-    if (this.data.date) {
-      const dueDate = new Date(this.data.date);
+    if (this._data.date) {
+      const dueDate = new Date(this._data.date);
     
       if (!isNaN(dueDate.getTime())) { 
         todoDate.textContent = `Due: ${dueDate.toLocaleString("en-US", {

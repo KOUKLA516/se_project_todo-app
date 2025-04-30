@@ -7,7 +7,7 @@ class Section {
 
   // renders all items on load
   renderItems() {
-    this._items.forEach(item => {
+    this._items.forEach((item) => {
       this._renderer(item);
     });
   }

@@ -30,10 +30,14 @@ class FormValidator {
     }
   
     resetValidation() {
+      // reset the form fields
+      this._formElement.reset();
+    
       // clear input errors and update button state
       this._inputList.forEach((input) => this.hideInputError(input));
       this._toggleButtonState();
     }
+    
   
     _toggleButtonState() {
       if (this.isValid()) {
