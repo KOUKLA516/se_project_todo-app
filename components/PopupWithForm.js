@@ -25,9 +25,6 @@ class PopupWithForm extends Popup {
 
       const formData = this._getInputValues();
       this._handleFormSubmit(formData); // delegate form-specific logic
-      this._form.reset();
-      this._validator.resetValidation();
-      this.close();
     });
   }
 
